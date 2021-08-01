@@ -14,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -42,6 +43,13 @@ public class StudentServices {
         return studentRepository.findAll();
     }
 
+    public List<StudentDto> getAllFullName() {
+        return
+                studentRepository.findAll().stream()
+                        .map(student -> modelMapper.map(student, StudentDto.class))
+                        .collect(Collectors.toList());
+    }
+
     public Page<Student> getStudentsPaged(int pageNumber, int pageSize,
                                           String sortBy) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize,
@@ -57,7 +65,7 @@ public class StudentServices {
         try {
             studentRepository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
-            System.out.println(e);
+            throw new NoSuchElementException("No student with this Id");
         }
     }
 
@@ -65,32 +73,24 @@ public class StudentServices {
         student.setID(id);
         if (!studentRepository.findById(id).isEmpty())
             studentRepository.save(student);
+        else
+            throw new NoSuchElementException("No student with this Id");
     }
 
     public void addCourse(long studentId, long courseID) {
-        Optional<Student> student = studentRepository.findById(studentId);
-        if (student.isPresent()) {
-            Student updatedStudent = student.get();
-            Set<Course> courseList = updatedStudent.getCourses();
-            Optional<Course> optionalCourse = courseServices.getCourse(courseID);
-            if (optionalCourse.isPresent()) {
-                courseList.add(optionalCourse.get());
-                updatedStudent.setCourses(courseList);
-                studentRepository.save(updatedStudent);
-            }
-        }
+        Optional<Student> studentOptional = studentRepository.findById(studentId);
+        Optional<Course> optionalCourse = courseServices.getCourse(courseID);
+        if(studentOptional.isEmpty())
+            throw new NoSuchElementException("No student with this Id");
+        if(optionalCourse.isEmpty())
+            throw new NoSuchElementException("No course with this Id");
+        studentOptional.get().getCourses().add(optionalCourse.get());
+        studentRepository.save(studentOptional.get());
     }
 
     public List<Student> getStudentsByAge(Integer age) {
         System.out.println(age);
         return studentRepository.getStudentsByAge(age);
-    }
-
-    public List<StudentDto> getAllFullName() {
-        return
-                studentRepository.findAll().stream()
-                        .map(student -> modelMapper.map(student, StudentDto.class))
-                        .collect(Collectors.toList());
     }
 
     public void deleteCourse(long studentID, long courseId) {
