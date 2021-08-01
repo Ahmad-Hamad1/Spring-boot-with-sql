@@ -10,8 +10,5 @@ import java.util.List;
 
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Long> {
-    @Query(
-            "SELECT new com.example.demo.courses.CourseDto ( c.name , st.firstName ) FROM Course c JOIN c.studentList st"
-    )
-    List<CourseDto> getCoursesWithStudents();
+
 }

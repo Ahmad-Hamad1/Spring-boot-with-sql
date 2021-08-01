@@ -6,9 +6,12 @@ import com.example.demo.repositories.TeacherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @Service
+@Transactional
 public class TeacherServices {
     private TeacherRepository teacherRepository;
     private CourseServices courseServices;
@@ -25,24 +28,16 @@ public class TeacherServices {
     }
 
     public void insertTeacher(Teacher teacher) {
-        for (Course course : teacher.getCourses()) {
-            course.getTeacherList().add(teacher);
-        }
         teacherRepository.save(teacher);
+    }
+    public Optional<Teacher> getTeacherById(long teacherId) {
+        return teacherRepository.findById(teacherId);
     }
 
     public void deleteTeacher(long ID) {
         teacherRepository.deleteById(ID);
     }
 
-    public void removeCourseFromAll(long ID) {
-        List<Teacher> teacherList = teacherRepository.findAll();
-        for (Teacher teacher : teacherList) {
-            for (Course course : teacher.getCourses()) {
-                if (course.getId() == ID)
-                    teacher.getCourses().remove(course);
-            }
-        }
-    }
+
 }
 

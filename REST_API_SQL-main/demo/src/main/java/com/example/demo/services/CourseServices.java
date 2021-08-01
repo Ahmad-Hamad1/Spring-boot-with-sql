@@ -7,10 +7,13 @@ import com.example.demo.repositories.CourseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class CourseServices {
     private CourseRepository courseRepository;
     private TeacherServices teacherServices;
@@ -39,30 +42,28 @@ public class CourseServices {
         return courseRepository.findById(ID);
     }
 
-    public List<CourseDto> getCourses() {
-        return courseRepository.getCoursesWithStudents();
+    public List<Course> getCourses(){
+        return courseRepository.findAll();
     }
 
     public void deleteCourse(long ID) {
         Optional<Course> courseOptional = courseRepository.findById(ID);
         if (courseOptional.isPresent()) {
-            Course course = courseOptional.get();
-            System.out.println(course.getTeacherList().size());
-            course.getTeacherList().clear();
-            System.out.println(course.getTeacherList().size());
+            studentServices.removeCourseFromAll(ID);
+            courseRepository.deleteById(ID);
         }
-        studentServices.removeCourseFromAll(ID);
-        courseRepository.deleteById(ID);
+        else
+            throw new NoSuchElementException("There is no course with this Id");
     }
 
-    public void addTeacherForCourse(long courseID, Teacher teacher) {
+    public void addTeacherForCourse(long courseID, long teacherId) {
         Optional<Course> courseOptional = courseRepository.findById(courseID);
-        Course course = courseOptional.get();
-        System.out.println(courseID);
-        System.out.println(teacher.toString());
-        System.out.println(course.getTeacherList().size());
-        course.getTeacherList().add(teacher);
-        System.out.println(course.getTeacherList().size());
+        Optional<Teacher> teacherOptional = teacherServices.getTeacherById(teacherId);
+        if(courseOptional.isEmpty())
+            throw new NoSuchElementException("No course with this Id");
+        if(teacherOptional.isEmpty())
+            throw new NoSuchElementException("No Teacher with this Id");
+        courseOptional.get().getTeacherList().add(teacherOptional.get());
     }
 
 }

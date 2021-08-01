@@ -57,7 +57,7 @@ public class StudentController {
 
     @GetMapping("/getById/{ID}")
     public Student getStudentById(@PathVariable("ID") long ID) {
-        return studentServices.getStudentBuId(ID);
+        return studentServices.getStudentById(ID);
     }
 
     @PostMapping("/insertNew")
@@ -79,7 +79,7 @@ public class StudentController {
     @DeleteMapping("/DeleteCourse/{studentID}/{courseId}")
     public void deleteCourse(@PathVariable("studentID") long studentID,
                              @PathVariable("courseId") long courseId) {
-        studentServices.deleteCourse(studentID, courseId);
+        studentServices.deleteCourseForStudent(studentID, courseId);
     }
 
     @PutMapping("/update/{id}")

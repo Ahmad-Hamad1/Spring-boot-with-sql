@@ -20,7 +20,7 @@ public class CourseController {
     }
 
     @GetMapping("/getCourses")
-    public List<CourseDto> getCourses() {
+    public List<Course> getCourses() {
         return courseServices.getCourses();
     }
 
@@ -29,6 +29,10 @@ public class CourseController {
         return courseServices.addCourse(course);
     }
 
+    @PostMapping("/addTeacherForCourse")
+    public void addTeacherForCourse(long courseId, long teacherId){
+        courseServices.addTeacherForCourse(courseId,teacherId);
+    }
     @DeleteMapping("/deleteCourse/{ID}")
     public void deleteCourse(@PathVariable("ID") Long ID) {
         courseServices.deleteCourse(ID);

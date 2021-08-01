@@ -15,22 +15,16 @@ public class Teacher {
     @Column(name = "TEXT", nullable = false)
     private String name;
 
-    @ManyToMany(mappedBy = "teacherList", cascade = CascadeType.PERSIST)
-    @JsonIgnore
-    private Set<Course> courses = new HashSet<>();
-
     public Teacher() {
     }
 
-    public Teacher(String name, Set<Course> courses) {
+    public Teacher(String name) {
         this.name = name;
-        this.courses = courses;
     }
 
     public Teacher(long id, String name, Set<Course> courses) {
         Id = id;
         this.name = name;
-        this.courses = courses;
     }
 
     public String getName() {
@@ -41,20 +35,11 @@ public class Teacher {
         this.name = name;
     }
 
-    public Set<Course> getCourses() {
-        return courses;
-    }
-
-    public void setCourses(Set<Course> courses) {
-        this.courses = courses;
-    }
-
     @Override
     public String toString() {
         return "Teacher{" +
                 "Id=" + Id +
                 ", name='" + name + '\'' +
-                ", courses=" + courses +
                 '}';
     }
 }

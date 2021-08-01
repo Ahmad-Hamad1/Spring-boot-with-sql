@@ -26,17 +26,13 @@ public class Course {
     private Set<Teacher> teacherList = new HashSet<>();
 
 
-    @ManyToMany(mappedBy = "courses", cascade = CascadeType.PERSIST)
-    @JsonIgnore
-    private Set<Student> studentList = new HashSet<>();
 
     public Course() {
     }
 
-    public Course(String name, Set<Teacher> teacherList, Set<Student> studentList) {
+    public Course(String name, Set<Teacher> teacherList) {
         this.name = name;
         this.teacherList = teacherList;
-        this.studentList = studentList;
     }
 
     public String getName() {
@@ -55,13 +51,6 @@ public class Course {
         this.teacherList = teacherList;
     }
 
-    public Set<Student> getStudentList() {
-        return studentList;
-    }
-
-    public void setStudentList(Set<Student> studentList) {
-        this.studentList = studentList;
-    }
 
     public long getId() {
         return Id;
@@ -73,7 +62,6 @@ public class Course {
                 "Id=" + Id +
                 ", name='" + name + '\'' +
                 ", teacherList=" + teacherList +
-                ", studentList=" + studentList +
                 '}';
     }
 }
