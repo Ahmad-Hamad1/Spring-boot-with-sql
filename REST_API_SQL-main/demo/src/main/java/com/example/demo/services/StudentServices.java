@@ -6,7 +6,6 @@ import com.example.demo.repositories.StudentRepository;
 import com.example.demo.student.StudentDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,7 +16,6 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -59,8 +57,8 @@ public class StudentServices {
         return studentRepository.findAll(pageable);
     }
 
-    public void insertStudent(Student student) {
-        studentRepository.save(student);
+    public Student insertStudent(Student student) {
+        return studentRepository.save(student);
     }
 
     public void deleteStudent(Long id) {
@@ -68,24 +66,24 @@ public class StudentServices {
         studentOptional.ifPresent(student -> {
             studentRepository.delete(student);
         });
-        studentOptional.orElseThrow(()-> new NoSuchElementException("No student with this Id"));
+        studentOptional.orElseThrow(() -> new NoSuchElementException("No student with this Id"));
     }
 
-    public void updateStudent(Long id, Student student) {
+    public Student updateStudent(Long id, Student student) {
         Optional<Student> studentOptional = studentRepository.findById(id);
-        studentOptional.ifPresent(student1 -> {
+        if (studentOptional.isPresent()) {
             student.setID(id);
-            studentRepository.save(student);
-        });
-        studentOptional.orElseThrow(()-> new NoSuchElementException("No student with this Id"));
+            return studentRepository.save(student);
+        } else
+            throw new NoSuchElementException("No student with this Id");
     }
 
     public void addCourse(long studentId, long courseID) {
         Optional<Student> studentOptional = studentRepository.findById(studentId);
         Optional<Course> optionalCourse = courseServices.getCourse(courseID);
-        if(studentOptional.isEmpty())
+        if (studentOptional.isEmpty())
             throw new NoSuchElementException("No student with this Id");
-        if(optionalCourse.isEmpty())
+        if (optionalCourse.isEmpty())
             throw new NoSuchElementException("No course with this Id");
         studentOptional.get().getCourses().add(optionalCourse.get());
     }
@@ -97,11 +95,11 @@ public class StudentServices {
     public void deleteCourseForStudent(long studentID, long courseId) {
         Optional<Student> studentOptional = studentRepository.findById(studentID);
         Optional<Course> courseOptional = courseServices.getCourse(courseId);
-        if(studentOptional.isEmpty())
+        if (studentOptional.isEmpty())
             throw new NoSuchElementException("No student with this Id");
-        if(courseOptional.isEmpty())
+        if (courseOptional.isEmpty())
             throw new NoSuchElementException("No course with this Id");
-        if(!studentOptional.get().getCourses().contains(courseOptional.get()))
+        if (!studentOptional.get().getCourses().contains(courseOptional.get()))
             throw new NoSuchElementException("The given student is not enrolled in the given course");
         studentOptional.get().getCourses().remove(courseOptional.get());
     }
@@ -118,5 +116,9 @@ public class StudentServices {
 
     public Student getStudentById(long id) {
         return studentRepository.findById(id).orElseThrow();
+    }
+
+    public Student getStudentByEmail(String email) {
+        return studentRepository.getStudentByEmail(email);
     }
 }

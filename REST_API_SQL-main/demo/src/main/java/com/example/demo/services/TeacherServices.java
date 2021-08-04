@@ -1,13 +1,11 @@
 package com.example.demo.services;
 
-import com.example.demo.entities.Course;
 import com.example.demo.entities.Teacher;
 import com.example.demo.repositories.TeacherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -30,6 +28,7 @@ public class TeacherServices {
     public void insertTeacher(Teacher teacher) {
         teacherRepository.save(teacher);
     }
+
     public Optional<Teacher> getTeacherById(long teacherId) {
         return teacherRepository.findById(teacherId);
     }
