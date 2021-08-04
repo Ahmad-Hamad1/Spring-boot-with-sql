@@ -28,6 +28,7 @@ public class Student {
     @Column(
             name = "email",
             nullable = false,
+            unique = true,
             columnDefinition = "TEXT"
     )
     private String email;
@@ -59,6 +60,10 @@ public class Student {
 
     public void setID(long ID) {
         this.ID = ID;
+    }
+
+    public long getID() {
+        return ID;
     }
 
     public String getFirstName() {

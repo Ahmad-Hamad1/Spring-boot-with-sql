@@ -1,6 +1,5 @@
 package com.example.demo.services;
 
-import com.example.demo.courses.CourseDto;
 import com.example.demo.entities.Course;
 import com.example.demo.entities.Teacher;
 import com.example.demo.repositories.CourseRepository;
@@ -42,7 +41,7 @@ public class CourseServices {
         return courseRepository.findById(ID);
     }
 
-    public List<Course> getCourses(){
+    public List<Course> getCourses() {
         return courseRepository.findAll();
     }
 
@@ -51,17 +50,16 @@ public class CourseServices {
         if (courseOptional.isPresent()) {
             studentServices.removeCourseFromAll(ID);
             courseRepository.deleteById(ID);
-        }
-        else
+        } else
             throw new NoSuchElementException("There is no course with this Id");
     }
 
     public void addTeacherForCourse(long courseID, long teacherId) {
         Optional<Course> courseOptional = courseRepository.findById(courseID);
         Optional<Teacher> teacherOptional = teacherServices.getTeacherById(teacherId);
-        if(courseOptional.isEmpty())
+        if (courseOptional.isEmpty())
             throw new NoSuchElementException("No course with this Id");
-        if(teacherOptional.isEmpty())
+        if (teacherOptional.isEmpty())
             throw new NoSuchElementException("No Teacher with this Id");
         courseOptional.get().getTeacherList().add(teacherOptional.get());
     }

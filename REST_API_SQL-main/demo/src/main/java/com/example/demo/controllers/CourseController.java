@@ -1,6 +1,5 @@
 package com.example.demo.controllers;
 
-import com.example.demo.courses.CourseDto;
 import com.example.demo.entities.Course;
 import com.example.demo.services.CourseServices;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +29,10 @@ public class CourseController {
     }
 
     @PostMapping("/addTeacherForCourse")
-    public void addTeacherForCourse(long courseId, long teacherId){
-        courseServices.addTeacherForCourse(courseId,teacherId);
+    public void addTeacherForCourse(long courseId, long teacherId) {
+        courseServices.addTeacherForCourse(courseId, teacherId);
     }
+
     @DeleteMapping("/deleteCourse/{ID}")
     public void deleteCourse(@PathVariable("ID") Long ID) {
         courseServices.deleteCourse(ID);

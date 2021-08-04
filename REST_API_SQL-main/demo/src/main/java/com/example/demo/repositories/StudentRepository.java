@@ -22,4 +22,6 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     List<StudentProjection> getStudentsFullName();
 
     Optional<Student> findByFirstName(String firstName);
+
+    Student getStudentByEmail(String email);
 }
