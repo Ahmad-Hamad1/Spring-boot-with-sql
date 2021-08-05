@@ -2,6 +2,7 @@ package com.example.demo.services;
 
 import com.example.demo.entities.Course;
 import com.example.demo.entities.Student;
+import com.example.demo.repositories.CourseRepository;
 import com.example.demo.repositories.StudentRepository;
 import com.example.demo.student.StudentDto;
 import org.modelmapper.ModelMapper;
@@ -10,12 +11,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,7 +27,7 @@ import java.util.stream.Collectors;
 public class StudentServices {
     private final ModelMapper modelMapper;
     private StudentRepository studentRepository;
-    private CourseServices courseServices;
+    private CourseRepository courseRepository;
 
     public StudentServices(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
@@ -35,8 +39,8 @@ public class StudentServices {
     }
 
     @Autowired
-    public void setCourseServices(CourseServices courseServices) {
-        this.courseServices = courseServices;
+    public void setCourseRepository(CourseRepository courseRepository) {
+        this.courseRepository = courseRepository;
     }
 
     public List<Student> getStudents() {
@@ -57,35 +61,40 @@ public class StudentServices {
         return studentRepository.findAll(pageable);
     }
 
-    public Student insertStudent(Student student) {
-        return studentRepository.save(student);
+    @Async
+    public CompletableFuture<Student> insertStudent(Student student) {
+        return CompletableFuture.completedFuture(studentRepository.save(student));
     }
 
-    public void deleteStudent(Long id) {
+    @Async
+    public CompletableFuture<Student> deleteStudent(Long id) {
         Optional<Student> studentOptional = studentRepository.findById(id);
         studentOptional.ifPresent(student -> {
             studentRepository.delete(student);
         });
         studentOptional.orElseThrow(() -> new NoSuchElementException("No student with this Id"));
+        return null;
     }
 
-    public Student updateStudent(Long id, Student student) {
+    @Async
+    public CompletableFuture<Student> updateStudent(Long id, Student student) {
         Optional<Student> studentOptional = studentRepository.findById(id);
         if (studentOptional.isPresent()) {
             student.setID(id);
-            return studentRepository.save(student);
+            return CompletableFuture.completedFuture(studentRepository.save(student));
         } else
             throw new NoSuchElementException("No student with this Id");
     }
 
-    public void addCourse(long studentId, long courseID) {
+    @Async
+    public void addCourse(long studentId, long courseID) throws ExecutionException, InterruptedException {
         Optional<Student> studentOptional = studentRepository.findById(studentId);
-        Optional<Course> optionalCourse = courseServices.getCourse(courseID);
+        Optional<Course> courseOptional = courseRepository.findById(courseID);
         if (studentOptional.isEmpty())
             throw new NoSuchElementException("No student with this Id");
-        if (optionalCourse.isEmpty())
+        if (courseOptional.isEmpty())
             throw new NoSuchElementException("No course with this Id");
-        studentOptional.get().getCourses().add(optionalCourse.get());
+        studentOptional.get().getCourses().add(courseOptional.get());
     }
 
     public List<Student> getStudentsByAge(Integer age) {
@@ -94,7 +103,7 @@ public class StudentServices {
 
     public void deleteCourseForStudent(long studentID, long courseId) {
         Optional<Student> studentOptional = studentRepository.findById(studentID);
-        Optional<Course> courseOptional = courseServices.getCourse(courseId);
+        Optional<Course> courseOptional = courseRepository.findById(courseId);
         if (studentOptional.isEmpty())
             throw new NoSuchElementException("No student with this Id");
         if (courseOptional.isEmpty())
@@ -114,11 +123,24 @@ public class StudentServices {
         }
     }
 
-    public Student getStudentById(long id) {
-        return studentRepository.findById(id).orElseThrow();
+    @Async
+    public CompletableFuture<Student> getStudentById(long id) {
+        Optional<Student> studentOptional = studentRepository.findById(id);
+        if (studentOptional.isEmpty())
+            throw new NoSuchElementException("No student with this Id");
+        return CompletableFuture.completedFuture(studentOptional.get());
     }
 
-    public Student getStudentByEmail(String email) {
-        return studentRepository.getStudentByEmail(email);
+    @Async
+    public CompletableFuture<Student> getStudentByEmail(String email, boolean isTest) {
+        Optional<Student> studentOptional = studentRepository.getStudentByEmail(email);
+        if(isTest) {
+            if(studentOptional.isPresent())
+                return CompletableFuture.completedFuture(studentOptional.get());
+            return null;
+        }
+        if (studentOptional.isEmpty())
+            throw new NoSuchElementException("No student with this email");
+        return CompletableFuture.completedFuture(studentOptional.get());
     }
 }

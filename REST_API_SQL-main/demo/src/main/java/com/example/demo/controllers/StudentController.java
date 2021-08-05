@@ -10,6 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping("/students")
@@ -56,18 +58,20 @@ public class StudentController {
     }
 
     @GetMapping("/getById/{ID}")
-    public Student getStudentById(@PathVariable("ID") long ID) {
+    public CompletableFuture<Student> getStudentById(@PathVariable("ID") long ID) throws ExecutionException, InterruptedException {
+        Student student = studentServices.getStudentById(ID).get();
+        System.out.println(student.getFirstName());
         return studentServices.getStudentById(ID);
     }
 
     @PostMapping("/insertNew")
-    public Student insertStudent(@RequestBody Student student) {
+    public CompletableFuture<Student> insertStudent(@RequestBody Student student) {
         return studentServices.insertStudent(student);
     }
 
     @PostMapping("/addCourse/{studentID}/{courseID}")
     public void addCourse(@PathVariable("studentID") long studentId,
-                          @PathVariable("courseID") long courseID) {
+                          @PathVariable("courseID") long courseID) throws ExecutionException, InterruptedException {
         studentServices.addCourse(studentId, courseID);
     }
 
@@ -83,7 +87,7 @@ public class StudentController {
     }
 
     @PutMapping("/update/{id}")
-    public Student updateStudent(@PathVariable("id") Long id, @RequestBody Student student) {
+    public CompletableFuture<Student> updateStudent(@PathVariable("id") Long id, @RequestBody Student student) {
         return studentServices.updateStudent(id, student);
     }
 }

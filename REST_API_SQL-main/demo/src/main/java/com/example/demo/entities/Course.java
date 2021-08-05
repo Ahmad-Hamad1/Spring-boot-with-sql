@@ -15,7 +15,7 @@ public class Course {
     @Column(name = "TEXT", nullable = false)
     private String name;
 
-    @ManyToMany(cascade = CascadeType.PERSIST)
+    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinTable(
             name = "ToughtBy",
             joinColumns = @JoinColumn(name = "Course_ID"),

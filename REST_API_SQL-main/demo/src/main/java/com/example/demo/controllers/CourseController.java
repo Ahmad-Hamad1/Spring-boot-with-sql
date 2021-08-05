@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/courses")
@@ -24,7 +25,7 @@ public class CourseController {
     }
 
     @PostMapping("/insertOne")
-    public Course insertCourse(@RequestBody Course course) {
+    public CompletableFuture<Course> insertCourse(@RequestBody Course course) {
         return courseServices.addCourse(course);
     }
 

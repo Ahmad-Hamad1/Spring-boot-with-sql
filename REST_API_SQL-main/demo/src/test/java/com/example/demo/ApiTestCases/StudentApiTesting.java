@@ -9,14 +9,14 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
-// test
+import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class StudentApiTesting {
     private StudentServices studentServices;
-
     @Autowired
     public void setStudentServices(StudentServices studentServices) {
         this.studentServices = studentServices;
@@ -24,33 +24,38 @@ public class StudentApiTesting {
 
     @Test
     @Order(1)
-    public void testInsertStudent() {
+    public void testInsertStudent() throws ExecutionException, InterruptedException {
         Student student = new Student();
         student.setFirstName("Test");
         student.setLastName("Student");
         student.setAge(30);
         student.setEmail("test@gmail.com");
-        Student addedStudent = studentServices.insertStudent(student);
-        assertNotNull(studentServices.getStudentById(addedStudent.getID()));
+        CompletableFuture<Student> addedStudent = studentServices.insertStudent(student);
+        assertNotNull(studentServices.getStudentById(addedStudent.get().getID()));
     }
 
     @Test
     @Order(2)
-    public void testUpdateStudent() {
-        Student student = studentServices.getStudentByEmail("test@gmail.com");
+    public void testUpdateStudent() throws ExecutionException, InterruptedException {
+        CompletableFuture<Student> studentCompletableFuture = studentServices.getStudentByEmail("test@gmail.com",false);
+        Student student = studentCompletableFuture.get();
         student.setLastName("Updated Student");
-        studentServices.updateStudent(student.getID(), student);
-        Student updatedStudent = studentServices.getStudentByEmail("test@gmail.com");
-        assertEquals("Updated Student", updatedStudent.getLastName());
+        CompletableFuture<Student> studentCompletableFuture1 = studentServices.updateStudent(student.getID(), student);
+        studentCompletableFuture1.get();
+        CompletableFuture<Student> updatedStudent = studentServices.getStudentByEmail("test@gmail.com",false);
+        System.out.println(updatedStudent.get().getLastName());
+        assertEquals("Updated Student", updatedStudent.get().getLastName());
     }
 
     @Test
     @Order(3)
-    public void testDeleteStudent() {
+    public void testDeleteStudent() throws ExecutionException, InterruptedException {
         long id;
-        Student student = studentServices.getStudentByEmail("test@gmail.com");
+        CompletableFuture<Student> studentCompletableFuture = studentServices.getStudentByEmail("test@gmail.com",false);
+        Student student = studentCompletableFuture.get();
         id = student.getID();
-        studentServices.deleteStudent(id);
-        assertNull(studentServices.getStudentByEmail("test@gmail.com"));
+        studentServices.deleteStudent(id).get();
+        Object presentCheck = studentServices.getStudentByEmail("test@gmail.com",true).get();
+        assertNull(presentCheck);
     }
 }

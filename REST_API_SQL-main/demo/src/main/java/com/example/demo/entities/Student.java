@@ -38,7 +38,7 @@ public class Student {
             columnDefinition = "INT"
     )
     private int age;
-    @ManyToMany(cascade = CascadeType.PERSIST)
+    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinTable(
             name = "Enrolled",
             joinColumns = @JoinColumn(name = "Student_ID"),
