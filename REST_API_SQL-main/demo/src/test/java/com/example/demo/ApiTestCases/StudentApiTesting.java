@@ -1,6 +1,7 @@
 package com.example.demo.ApiTestCases;
 
 import com.example.demo.entities.Student;
+import com.example.demo.exceptions.ApiError;
 import com.example.demo.services.StudentServices;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.NoSuchElementException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -37,13 +39,12 @@ public class StudentApiTesting {
     @Test
     @Order(2)
     public void testUpdateStudent() throws ExecutionException, InterruptedException {
-        CompletableFuture<Student> studentCompletableFuture = studentServices.getStudentByEmail("test@gmail.com",false);
+        CompletableFuture<Student> studentCompletableFuture = studentServices.getStudentByEmail("test@gmail.com");
         Student student = studentCompletableFuture.get();
         student.setLastName("Updated Student");
         CompletableFuture<Student> studentCompletableFuture1 = studentServices.updateStudent(student.getID(), student);
         studentCompletableFuture1.get();
-        CompletableFuture<Student> updatedStudent = studentServices.getStudentByEmail("test@gmail.com",false);
-        System.out.println(updatedStudent.get().getLastName());
+        CompletableFuture<Student> updatedStudent = studentServices.getStudentByEmail("test@gmail.com");
         assertEquals("Updated Student", updatedStudent.get().getLastName());
     }
 
@@ -51,11 +52,12 @@ public class StudentApiTesting {
     @Order(3)
     public void testDeleteStudent() throws ExecutionException, InterruptedException {
         long id;
-        CompletableFuture<Student> studentCompletableFuture = studentServices.getStudentByEmail("test@gmail.com",false);
+        CompletableFuture<Student> studentCompletableFuture = studentServices.getStudentByEmail("test@gmail.com");
         Student student = studentCompletableFuture.get();
         id = student.getID();
         studentServices.deleteStudent(id).get();
-        Object presentCheck = studentServices.getStudentByEmail("test@gmail.com",true).get();
-        assertNull(presentCheck);
+        assertThrows(ExecutionException.class,()->{
+            studentServices.getStudentByEmail("test@gmail.com").get();
+        });
     }
 }

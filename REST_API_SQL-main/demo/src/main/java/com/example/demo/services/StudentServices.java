@@ -73,7 +73,7 @@ public class StudentServices {
             studentRepository.delete(student);
         });
         studentOptional.orElseThrow(() -> new NoSuchElementException("No student with this Id"));
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
 
     @Async
@@ -132,15 +132,11 @@ public class StudentServices {
     }
 
     @Async
-    public CompletableFuture<Student> getStudentByEmail(String email, boolean isTest) {
+    public CompletableFuture<Student> getStudentByEmail(String email) {
         Optional<Student> studentOptional = studentRepository.getStudentByEmail(email);
-        if(isTest) {
-            if(studentOptional.isPresent())
-                return CompletableFuture.completedFuture(studentOptional.get());
-            return null;
+        if(studentOptional.isEmpty()){
+            throw new NoSuchElementException("No Student with this Id");
         }
-        if (studentOptional.isEmpty())
-            throw new NoSuchElementException("No student with this email");
         return CompletableFuture.completedFuture(studentOptional.get());
     }
 }

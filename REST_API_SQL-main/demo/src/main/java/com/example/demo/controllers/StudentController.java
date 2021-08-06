@@ -60,8 +60,11 @@ public class StudentController {
     @GetMapping("/getById/{ID}")
     public CompletableFuture<Student> getStudentById(@PathVariable("ID") long ID) throws ExecutionException, InterruptedException {
         Student student = studentServices.getStudentById(ID).get();
-        System.out.println(student.getFirstName());
         return studentServices.getStudentById(ID);
+    }
+    @GetMapping("/getByEmail/{email}")
+    public CompletableFuture<Student> getStudentByEmail(@PathVariable("email") String email){
+        return studentServices.getStudentByEmail(email);
     }
 
     @PostMapping("/insertNew")
