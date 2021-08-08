@@ -133,10 +133,10 @@ public class StudentServices {
 
     @Async
     public CompletableFuture<Student> getStudentByEmail(String email) {
-        Optional<Student> studentOptional = studentRepository.getStudentByEmail(email);
-        if(studentOptional.isEmpty()){
+        Student student = studentRepository.getStudentByEmail(email);
+        if(student == null){
             throw new NoSuchElementException("No Student with this Id");
         }
-        return CompletableFuture.completedFuture(studentOptional.get());
+        return CompletableFuture.completedFuture(student);
     }
 }
