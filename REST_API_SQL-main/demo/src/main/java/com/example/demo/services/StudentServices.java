@@ -51,7 +51,7 @@ public class StudentServices {
         return
                 studentRepository.findAll().stream()
                         .map(student -> modelMapper.map(student, StudentDto.class))
-                        .collect(Collectors.toList());
+                        .toList();
     }
 
     public Page<Student> getStudentsPaged(int pageNumber, int pageSize,
@@ -87,7 +87,7 @@ public class StudentServices {
     }
 
     @Async
-    public void addCourse(long studentId, long courseID) throws ExecutionException, InterruptedException {
+    public void addCourse(long studentId, long courseID){
         Optional<Student> studentOptional = studentRepository.findById(studentId);
         Optional<Course> courseOptional = courseRepository.findById(courseID);
         if (studentOptional.isEmpty())
@@ -113,11 +113,11 @@ public class StudentServices {
         studentOptional.get().getCourses().remove(courseOptional.get());
     }
 
-    public void removeCourseFromAll(long ID) {
+    public void removeCourseFromAll(long id) {
         List<Student> studentList = studentRepository.findAll();
         for (Student student : studentList) {
             for (Course course : student.getCourses()) {
-                if (course.getId() == ID)
+                if (course.getId() == id)
                     student.getCourses().remove(course);
             }
         }

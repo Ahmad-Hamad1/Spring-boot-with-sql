@@ -42,8 +42,8 @@ public class CourseServices {
     }
 
     @Async
-    public CompletableFuture<Course> getCourse(long ID) {
-        Optional<Course> courseOptional = courseRepository.findById(ID);
+    public CompletableFuture<Course> getCourse(long id) {
+        Optional<Course> courseOptional = courseRepository.findById(id);
         if (courseOptional.isEmpty())
             throw new NoSuchElementException("No course with this ID");
         return CompletableFuture.completedFuture(courseOptional.get());
@@ -54,11 +54,11 @@ public class CourseServices {
     }
 
     @Async
-    public void deleteCourse(long ID) {
-        Optional<Course> courseOptional = courseRepository.findById(ID);
+    public void deleteCourse(long id) {
+        Optional<Course> courseOptional = courseRepository.findById(id);
         if (courseOptional.isPresent()) {
-            studentServices.removeCourseFromAll(ID);
-            courseRepository.deleteById(ID);
+            studentServices.removeCourseFromAll(id);
+            courseRepository.deleteById(id);
         } else
             throw new NoSuchElementException("There is no course with this Id");
     }

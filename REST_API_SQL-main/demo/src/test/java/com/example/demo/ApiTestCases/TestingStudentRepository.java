@@ -18,7 +18,7 @@ import java.util.concurrent.ExecutionException;
 import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class StudentRepositoryTesting {
+     class TestingStudentRepository {
     private StudentRepository studentRepository;
     @Autowired
     public void setStudentServices(StudentRepository studentRepository) {
@@ -27,7 +27,7 @@ public class StudentRepositoryTesting {
 
     @Test
     @Order(1)
-    public void testInsertStudent() throws ExecutionException, InterruptedException {
+    void testInsertStudent() throws ExecutionException, InterruptedException {
         Student student = new Student();
         student.setFirstName("Test");
         student.setLastName("Student");
@@ -39,7 +39,7 @@ public class StudentRepositoryTesting {
 
     @Test
     @Order(2)
-    public void testUpdateStudent() throws ExecutionException, InterruptedException {
+    void testUpdateStudent() throws ExecutionException, InterruptedException {
         Student student = studentRepository.getStudentByEmail("test@gmail.com");
         student.setLastName("Updated Student");
         studentRepository.save(student);
@@ -50,7 +50,7 @@ public class StudentRepositoryTesting {
 
     @Test
     @Order(3)
-    public void testDeleteStudent() throws ExecutionException, InterruptedException {
+    void testDeleteStudent() throws ExecutionException, InterruptedException {
         long id;
         Student student = studentRepository.getStudentByEmail("test@gmail.com");
         assertNotNull(student);

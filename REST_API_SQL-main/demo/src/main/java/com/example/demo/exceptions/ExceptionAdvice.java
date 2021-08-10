@@ -15,18 +15,16 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ApiError handleNoSuchElementException(NoSuchElementException noSuchElementException,
                                                  HttpServletRequest httpServletRequest) {
-        ApiError apiError = new ApiError(404, noSuchElementException.getMessage(),
+        return new ApiError(404, noSuchElementException.getMessage(),
                 httpServletRequest.getServletPath());
-        return apiError;
     }
 
     @ExceptionHandler(PropertyValueException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiError handlePropertyValueException(PropertyValueException propertyValueException,
                                                  HttpServletRequest httpServletRequest) {
-        ApiError apiError = new ApiError(400, propertyValueException.getMessage(),
+            return new ApiError(400, propertyValueException.getMessage(),
                 httpServletRequest.getServletPath());
-        return apiError;
     }
 
 }

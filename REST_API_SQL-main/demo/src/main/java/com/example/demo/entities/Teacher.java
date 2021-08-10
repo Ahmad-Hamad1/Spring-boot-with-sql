@@ -8,7 +8,7 @@ import java.util.Set;
 public class Teacher {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private long Id;
+    private long id;
     @Column(name = "TEXT", nullable = false)
     private String name;
 
@@ -19,8 +19,8 @@ public class Teacher {
         this.name = name;
     }
 
-    public Teacher(long id, String name, Set<Course> courses) {
-        Id = id;
+    public Teacher(long id, String name) {
+        id = id;
         this.name = name;
     }
 
@@ -35,7 +35,7 @@ public class Teacher {
     @Override
     public String toString() {
         return "Teacher{" +
-                "Id=" + Id +
+                "Id=" + id +
                 ", name='" + name + '\'' +
                 '}';
     }

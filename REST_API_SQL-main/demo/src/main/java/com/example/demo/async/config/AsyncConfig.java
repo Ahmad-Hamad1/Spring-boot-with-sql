@@ -1,4 +1,4 @@
-package com.example.demo.asyncConfig;
+package com.example.demo.async.config;
 
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.beans.factory.annotation.Autowired;

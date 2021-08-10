@@ -12,7 +12,7 @@ import static javax.persistence.GenerationType.SEQUENCE;
 public class Student {
     @Id
     @GeneratedValue(strategy = SEQUENCE)
-    private long ID;
+    private long id;
     @Column(
             name = "first_name",
             nullable = false,
@@ -58,12 +58,12 @@ public class Student {
         this.courses = courses;
     }
 
-    public void setID(long ID) {
-        this.ID = ID;
+    public void setID(long id) {
+        this.id = id;
     }
 
     public long getID() {
-        return ID;
+        return id;
     }
 
     public String getFirstName() {
@@ -109,7 +109,7 @@ public class Student {
     @Override
     public String toString() {
         return "Student{" +
-                "ID=" + ID +
+                "ID=" + id +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +

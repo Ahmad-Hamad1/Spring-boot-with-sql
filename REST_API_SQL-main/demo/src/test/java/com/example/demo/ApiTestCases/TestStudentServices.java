@@ -17,16 +17,18 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.event.annotation.BeforeTestMethod;
 import org.springframework.test.context.junit4.SpringRunner;
 
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class StudentServicesTesting {
+public class TestStudentServices {
     private StudentServices studentServices;
 
     @Autowired
@@ -34,8 +36,13 @@ public class StudentServicesTesting {
         this.studentServices = studentServices;
     }
 
-    @MockBean
+    @Mock
     private StudentRepository studentRepository;
+
+    @BeforeTestMethod
+    public void beforeEachTest(){
+        studentRepository = mock(StudentRepository.class);
+    }
 
     @Test
     @Order(1)
@@ -46,7 +53,7 @@ public class StudentServicesTesting {
         student.setAge(21);
         student.setEmail("aaaa@gmail.com");
         student.setID(1);
-        //when(studentRepository.findById((long)1)).thenReturn(Optional.of(student));
-        //assertThat(studentRepository.findById((long)1).get()).isEqualTo(student);
+        when(studentRepository.findById((long)1)).thenReturn(Optional.of(student));
+        assertThat(studentRepository.findById((long)1).get()).isEqualTo(student);
     }
 }

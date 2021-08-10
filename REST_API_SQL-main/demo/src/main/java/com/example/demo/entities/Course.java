@@ -10,7 +10,7 @@ public class Course {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private long Id;
+    private long id;
 
     @Column(name = "TEXT", nullable = false)
     private String name;
@@ -50,13 +50,13 @@ public class Course {
 
 
     public long getId() {
-        return Id;
+        return id;
     }
 
     @Override
     public String toString() {
         return "Course{" +
-                "Id=" + Id +
+                "Id=" + id +
                 ", name='" + name + '\'' +
                 ", teacherList=" + teacherList +
                 '}';

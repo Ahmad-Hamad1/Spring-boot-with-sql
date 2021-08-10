@@ -18,22 +18,10 @@ import java.util.concurrent.ExecutionException;
 public class StudentController {
 
     private StudentServices studentServices;
-    private CourseServices courseServices;
-    private TeacherServices teacherServices;
 
     @Autowired
     public void setStudentServices(StudentServices studentServices) {
         this.studentServices = studentServices;
-    }
-
-    @Autowired
-    public void setCourseServices(CourseServices courseServices) {
-        this.courseServices = courseServices;
-    }
-
-    @Autowired
-    public void setTeacherServices(TeacherServices teacherServices) {
-        this.teacherServices = teacherServices;
     }
 
     @GetMapping("/getAll")
@@ -58,9 +46,8 @@ public class StudentController {
     }
 
     @GetMapping("/getById/{ID}")
-    public CompletableFuture<Student> getStudentById(@PathVariable("ID") long ID) throws ExecutionException, InterruptedException {
-        Student student = studentServices.getStudentById(ID).get();
-        return studentServices.getStudentById(ID);
+    public CompletableFuture<Student> getStudentById(@PathVariable("ID") long id) throws ExecutionException, InterruptedException {
+        return studentServices.getStudentById(id);
     }
     @GetMapping("/getByEmail/{email}")
     public CompletableFuture<Student> getStudentByEmail(@PathVariable("email") String email){
