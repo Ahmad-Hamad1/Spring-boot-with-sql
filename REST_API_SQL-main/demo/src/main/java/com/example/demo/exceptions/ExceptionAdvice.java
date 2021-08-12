@@ -11,6 +11,7 @@ import java.util.NoSuchElementException;
 
 @RestControllerAdvice
 public class ExceptionAdvice {
+
     @ExceptionHandler(NoSuchElementException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ApiError handleNoSuchElementException(NoSuchElementException noSuchElementException,

@@ -1,9 +1,7 @@
 package com.example.demo.ApiTestCases;
 
 import com.example.demo.entities.Student;
-import com.example.demo.exceptions.ApiError;
 import com.example.demo.repositories.StudentRepository;
-import com.example.demo.services.StudentServices;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -11,15 +9,15 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.NoSuchElementException;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-     class TestingStudentRepository {
+
+class TestingStudentRepository {
     private StudentRepository studentRepository;
+
     @Autowired
     public void setStudentServices(StudentRepository studentRepository) {
         this.studentRepository = studentRepository;

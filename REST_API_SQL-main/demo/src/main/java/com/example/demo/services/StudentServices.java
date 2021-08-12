@@ -7,6 +7,9 @@ import com.example.demo.repositories.StudentRepository;
 import com.example.demo.student.StudentDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -67,16 +70,16 @@ public class StudentServices {
     }
 
     @Async
+    @CacheEvict(value = "student-cache", key = "'Student-Cache'+#id")
     public CompletableFuture<Student> deleteStudent(Long id) {
         Optional<Student> studentOptional = studentRepository.findById(id);
-        studentOptional.ifPresent(student -> {
-            studentRepository.delete(student);
-        });
+        studentOptional.ifPresent(studentRepository::delete);
         studentOptional.orElseThrow(() -> new NoSuchElementException("No student with this Id"));
         return CompletableFuture.completedFuture(null);
     }
 
     @Async
+    @CachePut(value = "student-cache", key = "'Student-Cache'+#id")
     public CompletableFuture<Student> updateStudent(Long id, Student student) {
         Optional<Student> studentOptional = studentRepository.findById(id);
         if (studentOptional.isPresent()) {
@@ -124,6 +127,7 @@ public class StudentServices {
     }
 
     @Async
+    @Cacheable(value = "student-cache", key = "'Student-Cache'+#id")
     public CompletableFuture<Student> getStudentById(long id) {
         Optional<Student> studentOptional = studentRepository.findById(id);
         if (studentOptional.isEmpty())

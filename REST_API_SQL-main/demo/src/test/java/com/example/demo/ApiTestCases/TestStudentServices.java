@@ -3,26 +3,16 @@ package com.example.demo.ApiTestCases;
 import com.example.demo.entities.Student;
 import com.example.demo.repositories.StudentRepository;
 import com.example.demo.services.StudentServices;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
-
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-
-
-
-
 
 @SpringBootTest
 public class TestStudentServices {

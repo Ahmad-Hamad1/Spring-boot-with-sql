@@ -10,7 +10,7 @@ import java.util.Arrays;
 public class AsyncExceptionHandler implements AsyncUncaughtExceptionHandler {
     @Override
     public void handleUncaughtException(Throwable ex, Method method, Object... args) {
-        System.out.println("Method Name" + method.getName()
+        System.err.println("Method Name" + method.getName()
                 + "---" + Arrays.toString(args) + "----"
                 + "error Message: " + ex.getMessage());
     }
