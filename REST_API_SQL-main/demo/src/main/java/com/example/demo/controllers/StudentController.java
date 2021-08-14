@@ -65,6 +65,11 @@ public class StudentController {
         studentServices.addCourse(studentId, courseID);
     }
 
+    @PutMapping("/update/{id}")
+    public CompletableFuture<Student> updateStudent(@PathVariable("id") Long id, @RequestBody Student student) {
+        return studentServices.updateStudent(id, student);
+    }
+
     @DeleteMapping("/delete/{id}")
     public void deleteStudent(@PathVariable("id") Long id) {
         studentServices.deleteStudent(id);
@@ -76,8 +81,4 @@ public class StudentController {
         studentServices.deleteCourseForStudent(studentID, courseId);
     }
 
-    @PutMapping("/update/{id}")
-    public CompletableFuture<Student> updateStudent(@PathVariable("id") Long id, @RequestBody Student student) {
-        return studentServices.updateStudent(id, student);
-    }
 }
