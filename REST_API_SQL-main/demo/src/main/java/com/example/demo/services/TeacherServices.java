@@ -1,6 +1,6 @@
 package com.example.demo.services;
 
-import com.example.demo.DOTOS.TeacherDto;
+import com.example.demo.dtos.TeacherDto;
 import com.example.demo.entities.Teacher;
 import com.example.demo.repositories.TeacherRepository;
 import org.modelmapper.ModelMapper;

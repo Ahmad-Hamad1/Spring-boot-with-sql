@@ -1,6 +1,6 @@
 package com.example.demo.controllers;
 
-import com.example.demo.DOTOS.CourseDto;
+import com.example.demo.dtos.CourseDto;
 import com.example.demo.entities.Course;
 import com.example.demo.services.CourseServices;
 import org.springframework.beans.factory.annotation.Autowired;

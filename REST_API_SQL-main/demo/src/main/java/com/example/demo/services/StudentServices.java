@@ -1,6 +1,6 @@
 package com.example.demo.services;
 
-import com.example.demo.DOTOS.StudentDto;
+import com.example.demo.dtos.StudentDto;
 import com.example.demo.entities.Course;
 import com.example.demo.entities.Student;
 import com.example.demo.repositories.CourseRepository;

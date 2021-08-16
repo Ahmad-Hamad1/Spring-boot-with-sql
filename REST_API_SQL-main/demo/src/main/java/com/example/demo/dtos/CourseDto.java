@@ -1,4 +1,4 @@
-package com.example.demo.DOTOS;
+package com.example.demo.dtos;
 
 import com.example.demo.entities.Teacher;
 import lombok.AllArgsConstructor;

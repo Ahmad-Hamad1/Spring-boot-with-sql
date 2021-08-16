@@ -1,6 +1,6 @@
 package com.example.demo.ApiTestCases;
 
-import com.example.demo.DOTOS.StudentDto;
+import com.example.demo.dtos.StudentDto;
 import com.example.demo.entities.Student;
 import com.example.demo.repositories.StudentRepository;
 import com.example.demo.services.StudentServices;
