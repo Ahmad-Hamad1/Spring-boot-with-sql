@@ -1,7 +1,9 @@
 package com.example.demo.services;
 
+import com.example.demo.DOTOS.TeacherDto;
 import com.example.demo.entities.Teacher;
 import com.example.demo.repositories.TeacherRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -14,12 +16,12 @@ import java.util.concurrent.CompletableFuture;
 @Service
 @Transactional
 public class TeacherServices {
+
+    @Autowired
     private TeacherRepository teacherRepository;
 
     @Autowired
-    public void setTeacherRepository(TeacherRepository teacherRepository) {
-        this.teacherRepository = teacherRepository;
-    }
+    private ModelMapper mapper;
 
     @Async
     public void insertTeacher(Teacher teacher) {
@@ -27,11 +29,11 @@ public class TeacherServices {
     }
 
     @Async
-    public CompletableFuture<Teacher> getTeacherById(long teacherId) {
+    public CompletableFuture<TeacherDto> getTeacherById(long teacherId) {
         Optional<Teacher> teacherOptional = teacherRepository.findById(teacherId);
         if (teacherOptional.isEmpty())
             throw new NoSuchElementException("No teacher with this ID");
-        return CompletableFuture.completedFuture(teacherOptional.get());
+        return CompletableFuture.completedFuture(mapper.map(teacherOptional.get(), TeacherDto.class));
     }
 
     @Async

@@ -1,10 +1,8 @@
 package com.example.demo.controllers;
 
+import com.example.demo.DOTOS.StudentDto;
 import com.example.demo.entities.Student;
-import com.example.demo.services.CourseServices;
 import com.example.demo.services.StudentServices;
-import com.example.demo.services.TeacherServices;
-import com.example.demo.student.StudentDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +23,7 @@ public class StudentController {
     }
 
     @GetMapping("/getAll")
-    public List<Student> getStudents() {
+    public List<StudentDto> getStudents() {
         return studentServices.getStudents();
     }
 
@@ -41,22 +39,23 @@ public class StudentController {
     }
 
     @GetMapping("/getByAge/{age}")
-    public List<Student> getStudentsByAge(@PathVariable("age") Integer age) {
+    public List<StudentDto> getStudentsByAge(@PathVariable("age") Integer age) {
         return studentServices.getStudentsByAge(age);
     }
 
     @GetMapping("/getById/{ID}")
-    public CompletableFuture<Student> getStudentById(@PathVariable("ID") long id) throws ExecutionException, InterruptedException {
+    public CompletableFuture<StudentDto> getStudentById(@PathVariable("ID") long id) throws ExecutionException, InterruptedException {
         return studentServices.getStudentById(id);
     }
+
     @GetMapping("/getByEmail/{email}")
-    public CompletableFuture<Student> getStudentByEmail(@PathVariable("email") String email){
+    public CompletableFuture<StudentDto> getStudentByEmail(@PathVariable("email") String email) {
         return studentServices.getStudentByEmail(email);
     }
 
     @PostMapping("/insertNew")
-    public CompletableFuture<Student> insertStudent(@RequestBody Student student) {
-        return studentServices.insertStudent(student);
+    public CompletableFuture<StudentDto> insertStudent(@RequestBody StudentDto studentDto) {
+        return studentServices.insertStudent(studentDto);
     }
 
     @PostMapping("/addCourse/{studentID}/{courseID}")
@@ -66,8 +65,8 @@ public class StudentController {
     }
 
     @PutMapping("/update/{id}")
-    public CompletableFuture<Student> updateStudent(@PathVariable("id") Long id, @RequestBody Student student) {
-        return studentServices.updateStudent(id, student);
+    public CompletableFuture<StudentDto> updateStudent(@PathVariable("id") Long id, @RequestBody StudentDto studentDto) {
+        return studentServices.updateStudent(id, studentDto);
     }
 
     @DeleteMapping("/delete/{id}")

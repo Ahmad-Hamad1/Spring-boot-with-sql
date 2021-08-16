@@ -1,9 +1,11 @@
 package com.example.demo.services;
 
+import com.example.demo.DOTOS.CourseDto;
 import com.example.demo.entities.Course;
 import com.example.demo.entities.Teacher;
 import com.example.demo.repositories.CourseRepository;
 import com.example.demo.repositories.TeacherRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -13,44 +15,42 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
 public class CourseServices {
+    @Autowired
     private CourseRepository courseRepository;
+
+    @Autowired
     private TeacherRepository teacherRepository;
+
+    @Autowired
     private StudentServices studentServices;
 
     @Autowired
-    public void setCourseRepository(CourseRepository courseRepository) {
-        this.courseRepository = courseRepository;
-    }
+    private ModelMapper mapper;
 
-    @Autowired
-    public void setTeacherRepository(TeacherRepository teacherRepository) {
-        this.teacherRepository = teacherRepository;
-    }
-
-    @Autowired
-    public void setStudentServices(StudentServices studentServices) {
-        this.studentServices = studentServices;
+    @Async
+    public CompletableFuture<Course> addCourse(CourseDto courseDto) {
+        return CompletableFuture.completedFuture(courseRepository.save(mapper.map(courseDto, Course.class)));
     }
 
     @Async
-    public CompletableFuture<Course> addCourse(Course course) {
-        return CompletableFuture.completedFuture(courseRepository.save(course));
-    }
-
-    @Async
-    public CompletableFuture<Course> getCourse(long id) {
+    public CompletableFuture<CourseDto> getCourse(long id) {
         Optional<Course> courseOptional = courseRepository.findById(id);
         if (courseOptional.isEmpty())
             throw new NoSuchElementException("No course with this ID");
-        return CompletableFuture.completedFuture(courseOptional.get());
+        return CompletableFuture.completedFuture(mapper.map(courseOptional.get(), CourseDto.class));
     }
 
-    public List<Course> getCourses() {
-        return courseRepository.findAll();
+    public List<CourseDto> getCourses() {
+        return courseRepository.findAll()
+                .stream().map(course -> {
+                    return mapper.map(course, CourseDto.class);
+                })
+                .collect(Collectors.toList());
     }
 
     @Async

@@ -1,5 +1,6 @@
 package com.example.demo.controllers;
 
+import com.example.demo.DOTOS.CourseDto;
 import com.example.demo.entities.Course;
 import com.example.demo.services.CourseServices;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,13 +21,13 @@ public class CourseController {
     }
 
     @GetMapping("/getCourses")
-    public List<Course> getCourses() {
+    public List<CourseDto> getCourses() {
         return courseServices.getCourses();
     }
 
     @PostMapping("/insertOne")
-    public CompletableFuture<Course> insertCourse(@RequestBody Course course) {
-        return courseServices.addCourse(course);
+    public CompletableFuture<Course> insertCourse(@RequestBody CourseDto courseDto) {
+        return courseServices.addCourse(courseDto);
     }
 
     @PostMapping("/addTeacherForCourse")

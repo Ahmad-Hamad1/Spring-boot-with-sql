@@ -1,10 +1,10 @@
 package com.example.demo.services;
 
+import com.example.demo.DOTOS.StudentDto;
 import com.example.demo.entities.Course;
 import com.example.demo.entities.Student;
 import com.example.demo.repositories.CourseRepository;
 import com.example.demo.repositories.StudentRepository;
-import com.example.demo.student.StudentDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -22,38 +22,33 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @Service
 @Transactional
 public class StudentServices {
-    private final ModelMapper modelMapper;
+
+    @Autowired
     private StudentRepository studentRepository;
+
+    @Autowired
     private CourseRepository courseRepository;
 
-    public StudentServices(ModelMapper modelMapper) {
-        this.modelMapper = modelMapper;
-    }
-
     @Autowired
-    public void setStudentRepository(StudentRepository studentRepository) {
-        this.studentRepository = studentRepository;
-    }
+    private ModelMapper mapper;
 
-    @Autowired
-    public void setCourseRepository(CourseRepository courseRepository) {
-        this.courseRepository = courseRepository;
-    }
-
-    public List<Student> getStudents() {
-        return studentRepository.findAll();
+    public List<StudentDto> getStudents() {
+        return studentRepository.findAll()
+                .stream().map(student -> {
+                    return mapper.map(student, StudentDto.class);
+                })
+                .collect(Collectors.toList());
     }
 
     public List<StudentDto> getAllFullName() {
         return
                 studentRepository.findAll().stream()
-                        .map(student -> modelMapper.map(student, StudentDto.class))
+                        .map(student -> mapper.map(student, StudentDto.class))
                         .toList();
     }
 
@@ -65,13 +60,14 @@ public class StudentServices {
     }
 
     @Async
-    public CompletableFuture<Student> insertStudent(Student student) {
-        return CompletableFuture.completedFuture(studentRepository.save(student));
+    public CompletableFuture<StudentDto> insertStudent(StudentDto studentDto) {
+        return CompletableFuture.completedFuture(mapper.map(studentRepository.
+                save(mapper.map(studentDto, Student.class)), StudentDto.class));
     }
 
     @Async
     @CacheEvict(value = "student-cache", key = "'Student-Cache'+#id")
-    public CompletableFuture<Student> deleteStudent(Long id) {
+    public CompletableFuture<StudentDto> deleteStudent(Long id) {
         Optional<Student> studentOptional = studentRepository.findById(id);
         studentOptional.ifPresent(studentRepository::delete);
         studentOptional.orElseThrow(() -> new NoSuchElementException("No student with this Id"));
@@ -80,17 +76,19 @@ public class StudentServices {
 
     @Async
     @CachePut(value = "student-cache", key = "'Student-Cache'+#id")
-    public CompletableFuture<Student> updateStudent(Long id, Student student) {
+    public CompletableFuture<StudentDto> updateStudent(Long id, StudentDto studentDto) {
         Optional<Student> studentOptional = studentRepository.findById(id);
         if (studentOptional.isPresent()) {
-            student.setID(id);
-            return CompletableFuture.completedFuture(studentRepository.save(student));
+            studentDto.setId(id);
+            return CompletableFuture
+                    .completedFuture(mapper.map(studentRepository.
+                            save(mapper.map(studentDto, Student.class)), StudentDto.class));
         } else
             throw new NoSuchElementException("No student with this Id");
     }
 
     @Async
-    public void addCourse(long studentId, long courseID){
+    public void addCourse(long studentId, long courseID) {
         Optional<Student> studentOptional = studentRepository.findById(studentId);
         Optional<Course> courseOptional = courseRepository.findById(courseID);
         if (studentOptional.isEmpty())
@@ -100,8 +98,12 @@ public class StudentServices {
         studentOptional.get().getCourses().add(courseOptional.get());
     }
 
-    public List<Student> getStudentsByAge(Integer age) {
-        return studentRepository.getStudentsByAge(age);
+    public List<StudentDto> getStudentsByAge(Integer age) {
+        return studentRepository.getStudentsByAge(age)
+                .stream().map(student -> {
+                    return mapper.map(student, StudentDto.class);
+                })
+                .collect(Collectors.toList());
     }
 
     public void deleteCourseForStudent(long studentID, long courseId) {
@@ -128,19 +130,19 @@ public class StudentServices {
 
     @Async
     @Cacheable(value = "student-cache", key = "'Student-Cache'+#id")
-    public CompletableFuture<Student> getStudentById(long id) {
+    public CompletableFuture<StudentDto> getStudentById(long id) {
         Optional<Student> studentOptional = studentRepository.findById(id);
         if (studentOptional.isEmpty())
             throw new NoSuchElementException("No student with this Id");
-        return CompletableFuture.completedFuture(studentOptional.get());
+        return CompletableFuture.completedFuture(mapper.map(studentOptional.get(), StudentDto.class));
     }
 
     @Async
-    public CompletableFuture<Student> getStudentByEmail(String email) {
+    public CompletableFuture<StudentDto> getStudentByEmail(String email) {
         Student student = studentRepository.getStudentByEmail(email);
-        if(student == null){
+        if (student == null) {
             throw new NoSuchElementException("No Student with this Id");
         }
-        return CompletableFuture.completedFuture(student);
+        return CompletableFuture.completedFuture(mapper.map(student, StudentDto.class));
     }
 }
